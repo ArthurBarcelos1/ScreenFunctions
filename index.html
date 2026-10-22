@@ -6,10 +6,15 @@
     <title>Screen Functions - Games & More</title>
     <link rel="stylesheet" href="CSS/style.css">
     <link rel="icon" type="image/webp" href="Imgs/icon.webp">
+    <script src="https://kit.fontawesome.com/2b85fd6375.js" crossorigin="anonymous"></script>
 </head>
 <body class="home-page">
     <main class="home-screen">
         <h1>Choose an activity</h1>
+        <label class="activity-search">
+            <i class="fa-solid fa-magnifying-glass" style="color: #5a43e7;" aria-hidden="true"></i>
+            <input id="activity-search" type="search" placeholder="Search activities..." aria-label="Search activities">
+        </label>
         <nav class="game-menu" aria-label="Activities">
             <a class="game-card game-card--speed" href="SpeedClicker.html" data-description="Test your reaction speed by racing to click before anyone else.">
                 <span class="game-card__icon" aria-hidden="true">
@@ -33,6 +38,7 @@
                 </span>
                 <span class="game-card__label">Roulette</span>
             </a>
+            <p id="no-activities" class="no-activities" role="status" aria-hidden="true">No activities found.</p>
         </nav>
         <p id="activity-description" class="activity-description" aria-live="polite"></p>
     </main>

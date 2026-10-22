@@ -10,6 +10,7 @@ const roomId = "sala-aleatoria";
 const participantsRef = ref(db, `rooms/${roomId}/participants`);
 const drawRef = ref(db, `rooms/${roomId}/draw`);
 const countInput = document.getElementById("winner-count");
+const durationInput = document.getElementById("draw-duration");
 const participantCount = document.getElementById("participant-count");
 const startButton = document.getElementById("start-draw");
 const resetButton = document.getElementById("reset-draw");
@@ -65,6 +66,13 @@ function wait(milliseconds) {
     return new Promise(resolve => window.setTimeout(resolve, milliseconds));
 }
 
+async function waitUntil(timestamp) {
+    const remaining = timestamp - performance.now();
+    if (remaining > 0) {
+        await wait(remaining);
+    }
+}
+
 startButton.addEventListener("click", async () => {
     if (isDrawing) return;
 
@@ -74,9 +82,21 @@ startButton.addEventListener("click", async () => {
         return;
     }
 
+    const requestedDurationSeconds = Number(durationInput.value);
+    if (
+        !Number.isInteger(requestedDurationSeconds) ||
+        requestedDurationSeconds < 1 ||
+        requestedDurationSeconds > 120
+    ) {
+        status.textContent = "Enter a draw duration between 1 and 120 seconds.";
+        return;
+    }
+
     isDrawing = true;
     startButton.disabled = true;
     resetButton.disabled = true;
+    countInput.disabled = true;
+    durationInput.disabled = true;
     status.textContent = "Preparing the draw...";
 
     try {
@@ -96,23 +116,26 @@ startButton.addEventListener("click", async () => {
 
         const animationOrder = shuffle(connectedIds);
         const selectedPlayerIds = shuffle(connectedIds).slice(0, requestedCount);
+        const drawDurationMs = requestedDurationSeconds * 1000;
+        const stepDurationMs = drawDurationMs / animationOrder.length;
 
         await set(drawRef, {
             status: "spinning",
             currentPlayerId: null,
             selectedPlayerIds: []
         });
-        await wait(350);
+        const drawStartedAt = performance.now();
 
-        for (const currentPlayerId of animationOrder) {
+        for (const [index, currentPlayerId] of animationOrder.entries()) {
+            await waitUntil(drawStartedAt + stepDurationMs * index);
             await set(drawRef, {
                 status: "spinning",
                 currentPlayerId,
                 selectedPlayerIds: []
             });
-            await wait(180);
         }
 
+        await waitUntil(drawStartedAt + drawDurationMs);
         await set(drawRef, {
             status: "complete",
             currentPlayerId: null,
@@ -124,6 +147,8 @@ startButton.addEventListener("click", async () => {
         status.textContent = "Could not complete the draw.";
     } finally {
         isDrawing = false;
+        countInput.disabled = false;
+        durationInput.disabled = false;
         resetButton.disabled = false;
         startButton.disabled = participantIds.length === 0;
     }

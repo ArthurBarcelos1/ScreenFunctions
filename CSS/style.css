@@ -124,11 +124,67 @@ html, body {
     color: #202020;
 }
 
+.activity-search {
+    width: min(100%, 420px);
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    border: 1px solid #d3d0e2;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(40, 30, 90, 0.08);
+}
+
+.activity-search i {
+    font-size: 18px;
+}
+
+.activity-search input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #202020;
+    font: inherit;
+}
+
+.activity-search:focus-within {
+    border-color: #5a43e7;
+    box-shadow: 0 0 0 3px rgb(90 67 231 / 15%);
+}
+
 .game-menu {
+    position: relative;
+    min-height: 300px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-content: center;
     gap: 32px;
+}
+
+.no-activities {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    color: #555;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -46%);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.no-activities.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%);
+    transition-delay: 0s;
 }
 
 .game-card {
@@ -143,6 +199,19 @@ html, body {
     color: #171717;
     text-decoration: none;
     isolation: isolate;
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.game-card[hidden] {
+    display: none;
+}
+
+.game-card.is-filtered-out {
+    opacity: 0;
+    transform: scale(0.96);
+    pointer-events: none;
 }
 
 .game-card::before {
@@ -436,6 +505,7 @@ html, body {
     .game-menu {
         width: 100%;
         max-width: 420px;
+        min-height: 392px;
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 190px));
         justify-content: center;
@@ -465,7 +535,7 @@ html, body {
         line-height: 1.15;
     }
 
-    .game-card:last-child:nth-child(odd) {
+    .game-card.is-last-visible {
         grid-column: 1 / -1;
         justify-self: center;
         width: 100%;
@@ -486,5 +556,36 @@ html, body {
 
     .roulette-wheel-wrap {
         width: min(100%, 380px);
+    }
+}
+
+@media (max-width: 440px) {
+    .home-page {
+        min-width: 440px;
+        overflow-x: hidden;
+    }
+
+    .home-screen {
+        width: 440px;
+    }
+
+    .activity-search {
+        width: 390px;
+    }
+
+    .game-card__label {
+        font-size: 16.34px;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 963px) {
+    .game-menu {
+        min-height: 632px;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 631px) {
+    .game-menu {
+        min-height: 964px;
     }
 }
