@@ -117,7 +117,8 @@ startButton.addEventListener("click", async () => {
         const animationOrder = shuffle(connectedIds);
         const selectedPlayerIds = shuffle(connectedIds).slice(0, requestedCount);
         const drawDurationMs = requestedDurationSeconds * 1000;
-        const stepDurationMs = drawDurationMs / animationOrder.length;
+        const stepDurationMs = 200;
+        const animationSteps = Math.ceil(drawDurationMs / stepDurationMs);
 
         await set(drawRef, {
             status: "spinning",
@@ -126,8 +127,9 @@ startButton.addEventListener("click", async () => {
         });
         const drawStartedAt = performance.now();
 
-        for (const [index, currentPlayerId] of animationOrder.entries()) {
+        for (let index = 0; index < animationSteps; index += 1) {
             await waitUntil(drawStartedAt + stepDurationMs * index);
+            const currentPlayerId = animationOrder[index % animationOrder.length];
             await set(drawRef, {
                 status: "spinning",
                 currentPlayerId,
