@@ -130,8 +130,11 @@ startButton.addEventListener("click", async () => {
         const drawStartedAt = performance.now();
         const drawEndsAt = drawStartedAt + drawDurationMs;
         let blinkIndex = 0;
+        let nextBlinkAt = drawStartedAt;
 
-        while (performance.now() + blinkDurationMs <= drawEndsAt) {
+        while (nextBlinkAt + blinkDurationMs <= drawEndsAt) {
+            await waitUntil(nextBlinkAt);
+            const blinkStartedAt = performance.now();
             const currentPlayerId =
                 animationOrder[blinkIndex % animationOrder.length];
             blinkIndex += 1;
@@ -148,12 +151,9 @@ startButton.addEventListener("click", async () => {
                 selectedPlayerIds: []
             });
 
-            const blinkIntervalMs =
-                minBlinkIntervalMs +
+            const blinkIntervalMs = minBlinkIntervalMs +
                 Math.random() * (maxBlinkIntervalMs - minBlinkIntervalMs);
-            await waitUntil(
-                Math.min(performance.now() + blinkIntervalMs, drawEndsAt)
-            );
+            nextBlinkAt = blinkStartedAt + blinkIntervalMs;
         }
 
         await waitUntil(drawEndsAt);
