@@ -15,6 +15,7 @@ const dialogItem = document.getElementById("roulette-dialog-item");
 const keepOptionButton = document.getElementById("keep-roulette-option");
 const removeOptionButton = document.getElementById("remove-roulette-option");
 const rouletteOptionsRef = ref(db, "roulette/options");
+const localOptionsKey = "screen-functions-roulette-options";
 
 const colors = [
     "#f94144", "#f3722c", "#f9c74f", "#90be6d",
@@ -27,6 +28,9 @@ let rotation = 0;
 let isSpinning = false;
 let chosenIndex = -1;
 let hasInitializedOptions = false;
+let hasReceivedInitialOptions = false;
+let hasUserEditedOptions = false;
+let databaseAvailable = true;
 let saveTimeout = null;
 
 function readOptions() {
@@ -112,6 +116,36 @@ function updateOptions() {
     }
 }
 
+function saveOptionsLocally() {
+    try {
+        localStorage.setItem(localOptionsKey, JSON.stringify(options));
+        return true;
+    } catch (error) {
+        console.error("Error saving roulette options in this browser:", error);
+        return false;
+    }
+}
+
+function loadLocalOptions() {
+    if (!hasUserEditedOptions) {
+        try {
+            const savedOptions = JSON.parse(localStorage.getItem(localOptionsKey) || "null");
+            if (Array.isArray(savedOptions) && savedOptions.every(option => typeof option === "string")) {
+                optionsField.value = savedOptions.join("\n");
+            } else {
+                optionsField.value = defaultOptions.join("\n");
+            }
+        } catch (error) {
+            console.error("Error loading roulette options from this browser:", error);
+            optionsField.value = defaultOptions.join("\n");
+        }
+    }
+
+    updateOptions();
+    result.textContent =
+        "Database access is unavailable. Options are saved in this browser only.";
+}
+
 function scheduleOptionsSave() {
     if (saveTimeout !== null) {
         window.clearTimeout(saveTimeout);
@@ -120,6 +154,14 @@ function scheduleOptionsSave() {
     result.textContent = "Saving options...";
     saveTimeout = window.setTimeout(async () => {
         saveTimeout = null;
+        const savedLocally = saveOptionsLocally();
+        if (!databaseAvailable) {
+            result.textContent = savedLocally
+                ? "Database access is unavailable. Options are saved in this browser only."
+                : "Could not save options in the database or this browser.";
+            return;
+        }
+
         const savedOptions = {
             initialized: true,
             items: Object.fromEntries(
@@ -132,14 +174,25 @@ function scheduleOptionsSave() {
             result.textContent = "Options saved.";
         } catch (error) {
             console.error("Error saving roulette options:", error);
-            result.textContent = "Could not save options. Check your connection and try again.";
+            databaseAvailable = false;
+            result.textContent = savedLocally
+                ? "Database access is unavailable. Options are saved in this browser only."
+                : "Could not save options in the database or this browser.";
         }
     }, 300);
 }
 
 onValue(rouletteOptionsRef, async snapshot => {
+    const isInitialSnapshot = !hasReceivedInitialOptions;
+    hasReceivedInitialOptions = true;
+
     if (!snapshot.exists() && !hasInitializedOptions) {
         hasInitializedOptions = true;
+        if (hasUserEditedOptions) {
+            scheduleOptionsSave();
+            return;
+        }
+
         try {
             await set(
                 rouletteOptionsRef,
@@ -152,12 +205,18 @@ onValue(rouletteOptionsRef, async snapshot => {
             );
         } catch (error) {
             console.error("Error initializing roulette options:", error);
-            result.textContent = "Could not load or initialize saved options.";
+            databaseAvailable = false;
+            loadLocalOptions();
         }
         return;
     }
 
     hasInitializedOptions = true;
+    if (hasUserEditedOptions) {
+        if (isInitialSnapshot) scheduleOptionsSave();
+        return;
+    }
+
     const savedValue = snapshot.val();
     const savedItems = savedValue?.items;
     const savedOptions = savedItems && typeof savedItems === "object"
@@ -179,11 +238,14 @@ onValue(rouletteOptionsRef, async snapshot => {
     if (currentFieldOptions.join("\n") !== options.join("\n")) {
         optionsField.value = options.join("\n");
     }
-    optionsField.disabled = false;
     updateOptions();
 }, error => {
     console.error("Error loading roulette options:", error);
-    result.textContent = "Could not load saved options. Check your connection and try again.";
+    databaseAvailable = false;
+    hasReceivedInitialOptions = true;
+    hasInitializedOptions = true;
+    optionsField.disabled = false;
+    loadLocalOptions();
 });
 
 function animateSpin(targetRotation, duration) {
@@ -212,6 +274,7 @@ function animateSpin(targetRotation, duration) {
 }
 
 optionsField.addEventListener("input", () => {
+    hasUserEditedOptions = true;
     updateOptions();
     scheduleOptionsSave();
 });
