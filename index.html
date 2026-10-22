@@ -1,19 +1,41 @@
-
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click Detector</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Choose an activity</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="icon" type="image/webp" href="Imgs/icon.webp">
 </head>
-<body>
-    <main id="controller">
-        <div id="qrcode"></div>
-        <button id="reset"></button>
+<body class="home-page">
+    <main class="home-screen">
+        <h1>Choose an activity</h1>
+        <nav class="game-menu" aria-label="Activities">
+            <a class="game-card game-card--speed" href="SpeedClicker.html" data-description="Test your reaction speed by racing to click before anyone else.">
+                <span class="game-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" focusable="false">
+                        <path d="M36 4 12 36h17l-2 24 25-34H35l1-22Z"></path>
+                    </svg>
+                </span>
+                <span class="game-card__label">Speed Clicker</span>
+            </a>
+            <a class="game-card game-card--random" href="RandomChooser.html" data-description="Connect participant screens and randomly choose who gets selected.">
+                <span class="game-card__icon game-card__icon--random" aria-hidden="true">?</span>
+                <span class="game-card__label">Random Chooser</span>
+            </a>
+            <a class="game-card game-card--roulette" href="Roulette.html" data-description="Add your own options and spin the wheel to pick one at random.">
+                <span class="game-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" focusable="false">
+                        <circle cx="32" cy="32" r="27" fill="none" stroke="currentColor" stroke-width="4"></circle>
+                        <path d="M32 5v27l19 19M32 32 8 20m24 12L8 44" fill="none" stroke="currentColor" stroke-width="4"></path>
+                        <circle cx="32" cy="32" r="5"></circle>
+                    </svg>
+                </span>
+                <span class="game-card__label">Roulette</span>
+            </a>
+        </nav>
+        <p id="activity-description" class="activity-description" aria-live="polite"></p>
     </main>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script type="module" src="script.js"></script>
+    <script type="module" src="JS/home.js"></script>
 </body>
 </html>

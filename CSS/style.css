@@ -1,0 +1,490 @@
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    background: white;
+    font-family: Arial, sans-serif;
+}
+
+#controller {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 32px 20px;
+    text-align: center;
+}
+
+#controller h1,
+#controller p {
+    margin: 0;
+}
+
+.back-link {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    color: #ffff;
+    text-decoration: none;
+    background: rgb(255, 83, 83);
+    padding: 8px 12px;
+    border-radius: 10px;
+
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+#qrcode {
+    width: 220px;
+    height: 220px;
+    padding: 10px;
+    background: white;
+}
+
+#qrcode img,
+#qrcode canvas {
+    display: block;
+    width: 200px !important;
+    height: 200px !important;
+}
+
+#reset {
+    min-width: 130px;
+    min-height: 42px;
+    padding: 10px 16px;
+    background: #fff;
+    border: 1px solid black;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#player {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #222;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+#loading[hidden] {
+    display: none;
+}
+
+#loading img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.home-page {
+    min-height: 100vh;
+    background: #f7f7f7;
+}
+
+.home-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding: 32px 20px;
+    text-align: center;
+}
+
+.home-screen h1 {
+    margin: 0;
+    color: #202020;
+}
+
+.game-menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 32px;
+}
+
+.game-card {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: #171717;
+    text-decoration: none;
+    isolation: isolate;
+}
+
+.game-card::before {
+    position: absolute;
+    z-index: -1;
+    inset: 40px;
+    border-radius: 8px;
+    content: "";
+    transition: transform 500ms ease;
+}
+
+.game-card::after {
+    position: absolute;
+    z-index: -2;
+    inset: 40px;
+    border: 5px solid;
+    border-radius: 8px;
+    background: #fff;
+    content: "";
+}
+
+.game-card:hover::before,
+.game-card:focus-visible::before {
+    transform: rotate(10deg);
+}
+
+.game-card--speed::before {
+    background: #ffdb35;
+}
+
+.game-card--speed::after {
+    border-color: rgb(255 219 53 / 50%);
+}
+
+.game-card--random::before {
+    background: #a9ddff;
+}
+
+.game-card--random::after {
+    border-color: rgb(169 221 255 / 50%);
+}
+
+.game-card--roulette::before {
+    background: #c9f0d1;
+}
+
+.game-card--roulette::after {
+    border-color: rgb(201 240 209 / 50%);
+}
+
+.game-card__icon {
+    width: 64px;
+    height: 64px;
+}
+
+.game-card__icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+.game-card__icon--random {
+    display: grid;
+    place-items: center;
+    border: 4px solid currentColor;
+    border-radius: 50%;
+    font-size: 46px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.game-card__label {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.activity-description {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    left: 20px;
+    margin: 0;
+    color: #333;
+    font-size: 16px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+}
+
+.activity-description.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#controller.random-controller {
+    gap: 14px;
+}
+
+.winner-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.winner-count input {
+    width: 80px;
+    padding: 8px;
+    font: inherit;
+}
+
+.random-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.random-controls button {
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid #555;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+}
+
+.random-controls button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.roulette-page {
+    min-height: 100vh;
+    background: #f7f7f7;
+}
+
+.roulette-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 70px 24px 32px;
+    text-align: center;
+}
+
+.roulette-screen h1,
+.roulette-screen p {
+    margin: 0;
+}
+
+.roulette-layout {
+    width: min(100%, 980px);
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(260px, 360px);
+    align-items: center;
+    gap: 36px;
+}
+
+.roulette-wheel-wrap {
+    position: relative;
+    width: min(100%, 520px);
+    margin: 0 auto;
+}
+
+#roulette-wheel {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.roulette-pointer {
+    position: absolute;
+    z-index: 1;
+    top: -4px;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-top: 34px solid #222;
+    border-right: 22px solid transparent;
+    border-left: 22px solid transparent;
+    transform: translateX(-50%);
+}
+
+.roulette-options {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    text-align: left;
+}
+
+.roulette-options label {
+    font-weight: 700;
+}
+
+#roulette-options {
+    width: 100%;
+    min-height: 220px;
+    resize: vertical;
+    padding: 12px;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    font: inherit;
+    line-height: 1.5;
+}
+
+#spin-roulette {
+    min-height: 46px;
+    border: 0;
+    border-radius: 8px;
+    background: #222;
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#spin-roulette:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+#roulette-result {
+    min-height: 48px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #fff;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.roulette-result-dialog {
+    width: min(440px, calc(100% - 32px));
+    padding: 28px;
+    border: 0;
+    border-radius: 14px;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.roulette-result-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.roulette-result-dialog h2 {
+    margin: 0 0 12px;
+}
+
+#roulette-dialog-item {
+    margin: 0 0 16px;
+    color: #6941c6;
+    font-size: 26px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.roulette-result-dialog p {
+    margin: 0 0 16px;
+}
+
+.roulette-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.roulette-dialog-actions button {
+    min-height: 42px;
+    padding: 10px 14px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+#remove-roulette-option {
+    border-color: #a12622;
+    background: #a12622;
+    color: #fff;
+}
+
+@media (max-width: 600px) {
+    .game-menu {
+        width: 100%;
+        max-width: 420px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 190px));
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .game-card {
+        width: 100%;
+        max-width: 190px;
+        height: auto;
+        aspect-ratio: 1;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .game-card__icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .game-card__icon--random {
+        font-size: 36px;
+    }
+
+    .game-card__label {
+        font-size: clamp(14px, 3.8vw, 18px);
+        line-height: 1.15;
+    }
+
+    .game-card:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+        justify-self: center;
+        width: 100%;
+    }
+
+    .game-card::before {
+        inset: 18px;
+    }
+
+    .game-card::after {
+        inset: 18px;
+    }
+
+    .roulette-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .roulette-wheel-wrap {
+        width: min(100%, 380px);
+    }
+}

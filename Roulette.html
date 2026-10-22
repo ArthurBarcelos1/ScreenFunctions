@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="icon" type="image/webp" href="Imgs/icon.webp">
+</head>
+<body class="roulette-page">
+    <a class="back-link" href="index.html">Back</a>
+    <main class="roulette-screen">
+        <h1>Roulette</h1>
+        <p>Enter one option per line, then spin the wheel.</p>
+        <section class="roulette-layout" aria-label="Set up and spin the roulette wheel">
+            <div class="roulette-wheel-wrap">
+                <div class="roulette-pointer" aria-hidden="true"></div>
+                <canvas id="roulette-wheel" width="600" height="600" role="img" aria-label="Roulette wheel with draw options"></canvas>
+            </div>
+            <div class="roulette-options">
+                <label for="roulette-options">Options (one per line)</label>
+                <textarea id="roulette-options" rows="10" spellcheck="false" disabled></textarea>
+                <button id="spin-roulette" type="button" disabled>Spin the wheel</button>
+                <p id="roulette-result" role="status" aria-live="polite">Loading saved options...</p>
+            </div>
+        </section>
+    </main>
+    <dialog id="roulette-result-dialog" class="roulette-result-dialog" aria-labelledby="roulette-dialog-title">
+        <h2 id="roulette-dialog-title">Selected option</h2>
+        <p id="roulette-dialog-item"></p>
+        <p>Would you like to remove this option from future draws?</p>
+        <div class="roulette-dialog-actions">
+            <button id="keep-roulette-option" type="button">Keep option</button>
+            <button id="remove-roulette-option" type="button">Remove from future draws</button>
+        </div>
+    </dialog>
+    <script type="module" src="JS/roulette.js"></script>
+</body>
+</html>

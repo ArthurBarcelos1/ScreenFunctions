@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Chooser - Controller</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="icon" type="image/webp" href="Imgs/icon.webp">
+</head>
+<body>
+    <main id="controller" class="random-controller">
+        <a class="back-link" href="index.html">Back</a>
+        <h1>Random Chooser</h1>
+        <p>Scan the QR code to connect participant screens.</p>
+        <div id="qrcode" aria-label="QR code to join Random Chooser"></div>
+        <p id="participant-count" role="status">Waiting for participants...</p>
+        <label class="winner-count">
+            How many screens should turn green?
+            <input id="winner-count" type="number" min="1" value="1" inputmode="numeric">
+        </label>
+        <div class="random-controls">
+            <button id="start-draw" type="button" disabled>Draw</button>
+            <button id="reset-draw" type="button">Clear draw</button>
+        </div>
+        <p id="draw-status" role="status" aria-live="polite"></p>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script type="module" src="JS/random-chooser.js"></script>
+</body>
+</html>
