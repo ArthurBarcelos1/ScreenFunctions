@@ -16,6 +16,10 @@ const startButton = document.getElementById("start-draw");
 const resetButton = document.getElementById("reset-draw");
 const status = document.getElementById("draw-status");
 
+const blinkDurationMs = 300;
+const minBlinkIntervalMs = 600;
+const maxBlinkIntervalMs = 1200;
+
 const playerUrl = new URL("SpeedClickPlayer.html", window.location.href);
 playerUrl.searchParams.set("room", roomId);
 playerUrl.searchParams.set("mode", "random");
@@ -117,8 +121,6 @@ startButton.addEventListener("click", async () => {
         const animationOrder = shuffle(connectedIds);
         const selectedPlayerIds = shuffle(connectedIds).slice(0, requestedCount);
         const drawDurationMs = requestedDurationSeconds * 1000;
-        const stepDurationMs = 200;
-        const animationSteps = Math.ceil(drawDurationMs / stepDurationMs);
 
         await set(drawRef, {
             status: "spinning",
@@ -126,18 +128,35 @@ startButton.addEventListener("click", async () => {
             selectedPlayerIds: []
         });
         const drawStartedAt = performance.now();
+        const drawEndsAt = drawStartedAt + drawDurationMs;
+        let blinkIndex = 0;
 
-        for (let index = 0; index < animationSteps; index += 1) {
-            await waitUntil(drawStartedAt + stepDurationMs * index);
-            const currentPlayerId = animationOrder[index % animationOrder.length];
+        while (performance.now() + blinkDurationMs <= drawEndsAt) {
+            const currentPlayerId =
+                animationOrder[blinkIndex % animationOrder.length];
+            blinkIndex += 1;
             await set(drawRef, {
                 status: "spinning",
                 currentPlayerId,
                 selectedPlayerIds: []
             });
+
+            await wait(blinkDurationMs);
+            await set(drawRef, {
+                status: "spinning",
+                currentPlayerId: null,
+                selectedPlayerIds: []
+            });
+
+            const blinkIntervalMs =
+                minBlinkIntervalMs +
+                Math.random() * (maxBlinkIntervalMs - minBlinkIntervalMs);
+            await waitUntil(
+                Math.min(performance.now() + blinkIntervalMs, drawEndsAt)
+            );
         }
 
-        await waitUntil(drawStartedAt + drawDurationMs);
+        await waitUntil(drawEndsAt);
         await set(drawRef, {
             status: "complete",
             currentPlayerId: null,
